@@ -60,7 +60,7 @@ class Table:
             return
 
         if not joueurs_actifs:
-            print("Erreur : Aucun joueur actif. Le jeu ne peut pas continuer.")
+            print("Oops !  Aucun joueur actif. Le jeu ne peut pas continuer.")
             return
 
         # Calcul des scores pour les joueurs actifs

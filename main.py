@@ -1,6 +1,26 @@
 from table import Table
 from poker.joueur import Joueur
 
+def initialiser_joueurs():
+    """Crée et initialise les joueurs pour la partie."""
+    joueurs = []
+    nombre_joueurs = 0
+    
+    while nombre_joueurs < 2 or nombre_joueurs > 10:
+        try:
+            nombre_joueurs = int(input("Combien de joueurs (2 à 10) ? "))
+            if nombre_joueurs < 2 or nombre_joueurs > 10:
+                print("Le nombre de joueurs doit être compris entre 2 et 10.")
+        except ValueError:
+            print("Veuillez entrer un nombre valide.")
+
+    for i in range(1, nombre_joueurs + 1):
+        nom = input(f"Entrez le nom du joueur {i} : ").strip()
+        jetons = 100  # Chaque joueur commence avec 100 jetons par défaut
+        joueurs.append(Joueur(nom, jetons))
+
+    return joueurs
+
 def tour_de_jeu(table):
     """Gère un tour de jeu interactif."""
     for joueur in table.joueurs:
@@ -28,11 +48,10 @@ if __name__ == "__main__":
     table = Table()
     table.melanger_cartes()
 
-    # Ajout des joueurs
-    joueur1 = Joueur("Ousmane", 100)
-    joueur2 = Joueur("Abdoulaye", 100)
-    table.ajouter_joueur(joueur1)
-    table.ajouter_joueur(joueur2)
+    # Initialisation des joueurs
+    joueurs = initialiser_joueurs()
+    for joueur in joueurs:
+        table.ajouter_joueur(joueur)
 
     # Distribution des cartes
     table.distribuer_cartes()
