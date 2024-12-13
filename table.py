@@ -47,34 +47,39 @@ class Table:
         return f"{valeur}{couleur}"
 
 
-    
-    # def carte_to_treys(self, carte):
-    #     """Convertit une carte en un format compatible avec Treys."""
-    #     if carte.valeur == 1:  # Si une carte a la valeur '1', la transformer en 'A'
-    #         valeur = 'A'
-    #     else:
-    #         valeur = str(carte.valeur)
-    #     couleur = self.SUIT_MAPPING[carte.couleur]
-    #     return f"{valeur}{couleur}"
-
-
     def determiner_gagnant(self):
         scores = {}
-        for joueur in self.joueurs:
-            if joueur.actif:
-                try:
-                    print(f"Main du joueur {joueur.nom}: {joueur.cartes}")
-                    print(f"Cartes communes : {self.cartes_communes}")
-                    main = [Card.new(self.carte_to_treys(carte)) for carte in joueur.cartes]
-                    commune = [Card.new(self.carte_to_treys(carte)) for carte in self.cartes_communes]
-                    score = self.evaluator.evaluate(commune, main)
-                    scores[joueur] = score
-                except Exception as e:
-                    print(f"Erreur pour le joueur {joueur.nom}: {e}")
-                    raise e
+        joueurs_actifs = [joueur for joueur in self.joueurs if joueur.actif]
+        
+        if len(joueurs_actifs) == 1:
+            # Si un seul joueur est encore actif, il gagne automatiquement
+            gagnant = joueurs_actifs[0]
+            print(f"{gagnant.nom} gagne car tous les autres joueurs se sont couchés!")
+            gagnant.jetons += self.pot
+            self.pot = 0
+            return
 
+        if not joueurs_actifs:
+            print("Erreur : Aucun joueur actif. Le jeu ne peut pas continuer.")
+            return
+
+        # Calcul des scores pour les joueurs actifs
+        for joueur in joueurs_actifs:
+            try:
+                print(f"Main du joueur {joueur.nom}: {joueur.cartes}")
+                print(f"Cartes communes : {self.cartes_communes}")
+                main = [Card.new(self.carte_to_treys(carte)) for carte in joueur.cartes]
+                commune = [Card.new(self.carte_to_treys(carte)) for carte in self.cartes_communes]
+                score = self.evaluator.evaluate(commune, main)
+                scores[joueur] = score
+            except Exception as e:
+                print(f"Erreur pour le joueur {joueur.nom}: {e}")
+                raise e
+
+        # Déterminer le gagnant parmi les joueurs actifs
         gagnant = min(scores, key=scores.get)
         print(f"Le gagnant est {gagnant.nom} avec un score de {scores[gagnant]}!")
         gagnant.jetons += self.pot
         self.pot = 0
+
 
